@@ -1,2 +1,2 @@
-# Matem-ticas-IA-
-IA especializada en matematicas 
+# Juventus
+IA personal del instituto juventud
