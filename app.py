@@ -4,15 +4,15 @@ import streamlit.components.v1 as components
 
 # CONFIGURACIÓN DE PÁGINA
 st.set_page_config(
-    page_title="🌻 Psique IJEM",
-    page_icon="🌻",
+    page_title="📐 Mateo IA | Matemáticas",
+    page_icon="📐",
     layout="centered",
     initial_sidebar_state="collapsed",
     menu_items={'Get Help': None, 'Report a bug': None, 'About': None}
 )
 
 # CSS ESENCIAL
-css_psique = """
+css_mateo = """
 <style>
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
@@ -24,25 +24,32 @@ css_psique = """
     [data-testid="stStatusWidget"] {display: none;}
 </style>
 """
-st.markdown(css_psique, unsafe_allow_html=True)
+st.markdown(css_mateo, unsafe_allow_html=True)
 
-# PERSONALIDAD DE PSIQUE IJEM
-SYSTEM_PROMPT = """Eres Psique IJEM, un asistente de inteligencia artificial especializado en primeros auxilios psicológicos, apoyo emocional y respaldo para adolescentes. Tu símbolo es un girasol, representando la búsqueda de la luz y la esperanza.
+# PERSONALIDAD DE MATEO IA - ESPECIALISTA EN MATEMÁTICAS
+SYSTEM_PROMPT = """Eres Mateo IA, un asistente de inteligencia artificial especializado en MATEMÁTICAS. Tu símbolo es un compás y una escuadra, representando la precisión y el razonamiento lógico.
 
-Tu objetivo principal es ofrecer contención emocional, escucha activa y orientación inicial a estudiantes que atraviesen momentos de crisis, estrés, ansiedad o problemas personales.
+Tu objetivo principal es ayudar a estudiantes a comprender conceptos matemáticos, resolver problemas paso a paso, y desarrollar pensamiento matemático.
 
 **REGLAS FUNDAMENTALES:**
-1.  **Advertencia Inicial Obligatoria:** En tu primer mensaje de bienvenida, debes aclarar con total transparencia: "Hola, soy Psique IJEM. Es importante que sepas que soy un sistema de apoyo emocional y **no reemplazo a un psicólogo profesional ni a una evaluación clínica**. Mis orientaciones no tienen validez profesional médica. Si sientes que tu situación es grave o una emergencia, por favor acude con un especialista o adulto de confianza."
-2.  **Tono:** Profesional pero profundamente empático, cálido y muy humano. Usa un lenguaje accesible para adolescentes.
-3.  **Empatía:** Valida siempre las emociones del usuario antes de dar consejos. Nunca juzgues ni minimices lo que sienten.
-4.  **Seguridad:** Si detectas indicadores de riesgo inminente (autolesiones, ideación suicida), insta amable pero firmemente a buscar ayuda profesional inmediata.
+1.  **Advertencia Inicial Obligatoria:** En tu primer mensaje de bienvenida, debes aclarar: "¡Hola! Soy Mateo IA, tu asistente en matemáticas. Recuerda que soy una herramienta de apoyo al aprendizaje. Es importante que intentes resolver los problemas por ti mismo primero. Mis explicaciones te guiarán, pero el verdadero aprendizaje viene con la práctica personal."
+2.  **Tono:** Paciente, didáctico y motivador. Usa un lenguaje claro y accesible para estudiantes.
+3.  **Metodología:** Explica los conceptos paso a paso, muestra procedimientos claros, y cuando sea posible, ofrece ejemplos similares para practicar.
+4.  **Áreas de Especialización:** Álgebra, geometría, cálculo, trigonometría, estadística, aritmética, y matemáticas en general desde nivel básico hasta avanzado.
 
-Responde de forma concisa pero cálida. Eres un compañero de apoyo en el Instituto Juventud (IJEM).
+**ESTILO DE RESPUESTA:**
+- Comienza validando la pregunta del usuario.
+- Desglosa el problema en pasos lógicos.
+- Usa notación matemática clara cuando sea necesario.
+- Ofrece tips o trucos de aprendizaje.
+- Si la pregunta no es de matemáticas, amablemente redirige al tema.
+
+Responde de forma concisa pero completa. ¡Tú puedes con las matemáticas!
 """
 
 # INTERFAZ PRINCIPAL
-st.title("🌻 Psique IJEM")
-st.caption("Primeros Auxilios Psicológicos y Apoyo Emocional")
+st.title("📐 Mateo IA")
+st.caption("Especialista en Matemáticas | Explicaciones paso a paso")
 
 # CONEXIÓN CON GROQ
 try:
@@ -57,7 +64,6 @@ except Exception:
 # --- FUNCIÓN DE VOZ (TEXT-TO-SPEECH) ---
 def speak_js(text):
     """Inyecta JavaScript para hablar."""
-    # Limpiamos el texto para evitar errores en JS
     clean_text = text.replace("'", "\\'").replace('"', '\\"').replace("\n", " ")
     js_code = f"""
     <div id="audio-trigger"></div>
@@ -68,7 +74,7 @@ def speak_js(text):
                 var utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = 'es-MX';
                 utterance.rate = 1.0;
-                window.speechSynthesis.cancel(); // Detiene audios previos
+                window.speechSynthesis.cancel();
                 window.speechSynthesis.speak(utterance);
             }}
         }}
@@ -107,7 +113,6 @@ def procesar_respuesta(user_input):
             )
             response = st.write_stream(stream)
             st.session_state.messages.append({"role": "assistant", "content": response})
-            # Guardamos la respuesta para el botón de audio
             st.session_state.last_response = response
         except Exception as e:
             st.error(f"⚠️ Error: {str(e)}")
@@ -115,11 +120,10 @@ def procesar_respuesta(user_input):
 # --- INTERFAZ DE USUARIO ---
 
 # 1. Entrada de Texto
-if prompt := st.chat_input("Escribe cómo te sientes..."):
+if prompt := st.chat_input("Escribe tu problema o duda matemática..."):
     procesar_respuesta(prompt)
 
 # 2. Botón para escuchar la última respuesta
-# Se muestra solo si ya hay una respuesta generada
 if st.session_state.last_response:
     st.markdown("---")
     col1, col2, col3 = st.columns([1, 2, 1])
